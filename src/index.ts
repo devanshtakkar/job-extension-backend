@@ -38,7 +38,7 @@ app.post('/api/process-questions', async (req: Request, res: Response) => {
         console.error('Error processing questions:', error);
         res.status(500).json({
             error: 'Internal Server Error',
-            message: error instanceof Error ? error.message : 'Unknown error occurred'
+            message: 'Failed to process questions with AI'
         });
     }
 });
