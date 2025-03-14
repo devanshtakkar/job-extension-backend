@@ -2,3 +2,5 @@ node_modules
 dev
 dist
 .env
+
+src/misc/userProfile.ts
