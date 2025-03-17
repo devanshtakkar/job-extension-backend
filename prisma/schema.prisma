@@ -14,21 +14,80 @@ datasource db {
   shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
-model Questions {
-  id        Int      @id @default(autoincrement())
-  question  String
-  answer    String?
-  createdAt DateTime @default(now())
-  userid    Int?
-  user      User?    @relation(fields: [userid], references: [id])
-  questionJson Json
+model User {
+  id            Int       @id @default(autoincrement())
+  credits       Int       @default(100)
+  firebase_userid String?  @unique
+  createdAt     DateTime  @default(now())
+  applications  IndeedApplication[]
+  questions     Questions[]
+  userDetails   UserDetails[]
 }
 
-model User {
-  id        Int      @id @default(autoincrement())
-  
-  name      String?
-  createdAt DateTime @default(now())
-  questions Questions[]
-  userJson  Json
+enum ApplicationStatus {
+  STARTED
+  PENDING
+  COMPLETED
+  ERROR
+}
+
+model IndeedApplication {
+  id          Int       @id @default(autoincrement())
+  userId      Int
+  user        User      @relation(fields: [userId], references: [id])
+  jobDesc     String    @db.Text
+  title       String
+  employer    String
+  status      ApplicationStatus @default(STARTED)
+  applicationUrl String
+  errors      Error[]    @relation("ApplicationErrors")
+  questions   Questions[] @relation("ApplicationQuestions")
+  coverLetter CoverLetter? @relation("ApplicationCoverLetter")
+  createdAt   DateTime  @default(now())
+
+  @@index([userId])
+}
+
+model Error {
+  id            Int       @id @default(autoincrement())
+  message       String
+  applicationId Int?
+  application   IndeedApplication? @relation("ApplicationErrors", fields: [applicationId], references: [id])
+  createdAt     DateTime  @default(now())
+
+  @@index([applicationId])
+}
+
+model Questions {
+  id            Int       @id @default(autoincrement())
+  userId        Int
+  user          User      @relation(fields: [userId], references: [id])
+  applicationId Int?
+  application   IndeedApplication? @relation("ApplicationQuestions", fields: [applicationId], references: [id])
+  platform      String
+  data          Json
+  user_answer   String?
+  createdAt     DateTime  @default(now())
+
+  @@index([userId])
+  @@index([applicationId])
+}
+
+model CoverLetter {
+  id            Int       @id @default(autoincrement())
+  applicationId Int?      @unique
+  application   IndeedApplication? @relation("ApplicationCoverLetter", fields: [applicationId], references: [id])
+  letter        String    @db.Text
+  createdAt     DateTime  @default(now())
+}
+
+model UserDetails {
+  id            Int       @id @default(autoincrement())
+  userId        Int
+  user          User      @relation(fields: [userId], references: [id])
+  name          String
+  details       Json
+  createdAt     DateTime  @default(now())
+
+  @@index([userId])
 }
