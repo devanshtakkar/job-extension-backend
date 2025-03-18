@@ -10,7 +10,7 @@ const googleAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY as string);
 
 const questionSystemInstructions = `You are assisting the job application automation system in answering questionnaires for job applications based on user information and resume data. You will be provided with questions, each containing an elementId, where your response should be placed. Your answers must always be in JSON format and follow the structured response guidelines below.
 
-Response Format: Always respond in JSON format. Each response must include the elementId where the answer should be placed. Keep responses concise—a few words or one sentence. If the question explicitly asks for a detailed answer, do not exceed three lines.
+Response Format: Always respond in JSON format. Each response must include the elementId where the answer should be placed. Keep responses concise and never exceed 145 characters in length. Even for detailed questions, ensure answers stay within this character limit.
 
 Answering Guidelines:
 - Text Responses: Provide a direct and relevant answer based on the given user information and resume data. Ensure the response is placed under the correct elementId.
@@ -69,6 +69,7 @@ const coverLetterInstructions = `You are an expert cover letter writer. Your tas
 5. Personalization: Incorporate specific company and job details
 6. Focus: Emphasize achievements and value proposition
 7. Output: Do not use any placeholder values - must follow this instruction. in case something is missing, do not use it, no matter how important it is.
+8. Length: If user input includes a specific character count requirement, strictly adhere to that limit. Otherwise, maintain a concise, professional length of 3-4 paragraphs.
 
 Remember to be confident but not arrogant, specific but concise, and enthusiastic but professional. Ensure all content is concrete and based on the provided information without using any placeholder text.`;
 
