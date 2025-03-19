@@ -27,6 +27,10 @@ const responseSchema: ArraySchema = {
     items: {
         type: SchemaType.OBJECT,
         properties: {
+            id: {
+                type: SchemaType.STRING,
+                description: "The unique identifier of the question"
+            },
             question: {
                 type: SchemaType.STRING,
                 description: "It is the exact same question that was asked."
@@ -49,7 +53,7 @@ const responseSchema: ArraySchema = {
                 description: "This is a boolean value that indicates whether the answer was answered using the available data of the person in the system or not."
             }
         },
-        required: ["question", "answer", "inputElmType", "answerElmId", "wasAvailable"]
+        required: ["id", "question", "answer", "inputElmType", "answerElmId", "wasAvailable"]
     }
 };
 

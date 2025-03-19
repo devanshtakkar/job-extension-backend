@@ -7,16 +7,33 @@ export const QuestionOptionSchema = z.object({
 });
 
 export const QuestionSchema = z.object({
+    id: z.string(),
     question: z.string(),
     inputElm: z.enum(['text', 'textarea', 'number', 'radio', 'select']),
     elementId: z.string(),
     options: z.array(QuestionOptionSchema).optional()
 });
 
-export const QuestionsArraySchema = z.array(QuestionSchema);
+export const ProcessQuestionsRequestSchema = z.object({
+    userId: z.string(),
+    applicationId: z.string(),
+    platform: z.string(),
+    questions: z.array(QuestionSchema)
+}).passthrough(); // Allows extra parameters in request body
+
+export const QuestionAnswerSchema = z.object({
+    id: z.string(),
+    question: z.string(),
+    answer: z.string(),
+    inputElmType: z.enum(['text', 'textarea', 'number', 'radio', 'select']),
+    answerElmId: z.string()
+});
+
+export const QuestionAnswersArraySchema = z.array(QuestionAnswerSchema);
 
 export type Question = z.infer<typeof QuestionSchema>;
 export type QuestionOption = z.infer<typeof QuestionOptionSchema>;
+export type QuestionAnswer = z.infer<typeof QuestionAnswerSchema>;
 
 // Hardcoded user profile for now
 export const userProfile = {

@@ -66,6 +66,7 @@ model Questions {
   application   IndeedApplication? @relation("ApplicationQuestions", fields: [applicationId], references: [id])
   platform      String
   data          Json
+  ai_answer     Json?
   user_answer   String?
   createdAt     DateTime  @default(now())
 

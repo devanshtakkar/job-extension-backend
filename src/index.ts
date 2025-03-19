@@ -2,7 +2,7 @@ import express, { Request, Response, NextFunction } from 'express';
 import { ZodError } from 'zod';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { QuestionsArraySchema } from './types/question';
+import { ProcessQuestionsRequestSchema, QuestionAnswersArraySchema } from './types/question';
 import { processQuestions, generateCoverLetter } from './lib/gemini.service';
 import { CreateIndeedApplicationSchema } from './types/indeed-application';
 import prisma from './lib/prisma';
@@ -22,13 +22,60 @@ app.use(express.urlencoded({ extended: true }));
 app.post('/api/process-questions', async (req: Request, res: Response) => {
     try {
         // Validate the request body
-        const questions = QuestionsArraySchema.parse(req.body);
+        const requestData = ProcessQuestionsRequestSchema.parse(req.body);
         
         // Process questions with Gemini AI
-        const aiResponse = await processQuestions(questions);
+        const aiResponse = await processQuestions(requestData.questions);
         
-        res.json(aiResponse);
+        try {
+            // Validate AI response format
+            const validatedResponse = QuestionAnswersArraySchema.parse(aiResponse);
+            
+            // Check if user exists
+            const user = await prisma.user.findUnique({
+                where: { id: Number(requestData.userId) }
+            });
+
+            if (!user) {
+                res.status(404).json({
+                    error: 'User not found',
+                    message: `No user found with id ${requestData.userId}`
+                });
+                return;
+            }
+
+            // Create a map of AI answers for easier lookup
+            const answersMap = validatedResponse.reduce((acc, answer) => {
+                acc[answer.id] = answer;
+                return acc;
+            }, {} as Record<string, typeof validatedResponse[0]>);
+
+            // Prepare data for batch insert
+            const questionsData = requestData.questions.map(question => ({
+                userId: Number(requestData.userId),
+                applicationId: requestData.applicationId ? Number(requestData.applicationId) : undefined,
+                platform: requestData.platform,
+                data: question,
+                ai_answer: answersMap[question.id]
+            }));
+
+            // Store questions and AI responses in database
+            await prisma.questions.createMany({
+                data: questionsData
+            });
+
+            res.json(validatedResponse);
+        } catch (validationError) {
+            // AI response validation failure is a server error
+            console.error('Invalid AI response format:', validationError);
+            res.status(500).json({
+                error: 'Internal Server Error',
+                message: 'AI response format was invalid'
+            });
+            return;
+        }
     } catch (error) {
+        // Request body validation error
         if (error instanceof ZodError) {
             res.status(400).json({
                 error: 'Validation Error',
