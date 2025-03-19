@@ -22,11 +22,11 @@ model User {
   applications  IndeedApplication[]
   questions     Questions[]
   userDetails   UserDetails[]
+  fingerprint    String?   @unique
 }
 
 enum ApplicationStatus {
   STARTED
-  PENDING
   COMPLETED
   ERROR
 }

@@ -4,6 +4,8 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import { QuestionsArraySchema } from './types/question';
 import { processQuestions, generateCoverLetter } from './lib/gemini.service';
+import { CreateIndeedApplicationSchema } from './types/indeed-application';
+import prisma from './lib/prisma';
 
 dotenv.config();
 
@@ -71,6 +73,53 @@ app.post('/api/generate-cover-letter', async (req: Request, res: Response) => {
         res.status(500).json({
             error: 'Internal Server Error',
             message: 'Failed to generate cover letter'
+        });
+    }
+});
+
+// Indeed application creation endpoint
+app.post('/api/indeed-application', async (req: Request, res: Response) => {
+    try {
+        const data = CreateIndeedApplicationSchema.parse(req.body);
+        
+        // Check if user exists
+        const user = await prisma.user.findUnique({
+            where: { id: data.userId }
+        });
+
+        if (!user) {
+            res.status(404).json({
+                error: 'User not found',
+                message: `No user found with id ${data.userId}`
+            });
+            return;
+        }
+
+        // Create indeed application
+        const application = await prisma.indeedApplication.create({
+            data: {
+                userId: data.userId,
+                jobDesc: data.jobDesc,
+                title: data.title,
+                employer: data.employer,
+                applicationUrl: data.applicationUrl
+            }
+        });
+
+        res.status(201).json(application);
+    } catch (error) {
+        if (error instanceof ZodError) {
+            res.status(400).json({
+                error: 'Validation Error',
+                details: error.errors
+            });
+            return;
+        }
+        
+        console.error('Error creating application:', error);
+        res.status(500).json({
+            error: 'Internal Server Error',
+            message: 'Failed to create application'
         });
     }
 });
