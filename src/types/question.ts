@@ -9,14 +9,14 @@ export const QuestionOptionSchema = z.object({
 export const QuestionSchema = z.object({
     id: z.string(),
     question: z.string(),
-    inputElm: z.enum(['text', 'textarea', 'number', 'radio', 'select']),
+    inputElm: z.string(),
     elementId: z.string(),
     options: z.array(QuestionOptionSchema).optional()
 });
 
 export const ProcessQuestionsRequestSchema = z.object({
-    userId: z.string(),
-    applicationId: z.string(),
+    userId: z.number(),
+    applicationId: z.number(),
     platform: z.string(),
     questions: z.array(QuestionSchema)
 }).passthrough(); // Allows extra parameters in request body

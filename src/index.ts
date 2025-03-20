@@ -75,11 +75,12 @@ app.post('/api/process-questions', async (req: Request, res: Response) => {
             return;
         }
     } catch (error) {
+        console.log(error)
         // Request body validation error
         if (error instanceof ZodError) {
             res.status(400).json({
                 error: 'Validation Error',
-                details: error.errors
+                message: error.errors
             });
             return;
         }

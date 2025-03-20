@@ -39,7 +39,7 @@ model IndeedApplication {
   title       String
   employer    String
   status      ApplicationStatus @default(STARTED)
-  applicationUrl String
+  applicationUrl String @db.MediumText
   errors      Error[]    @relation("ApplicationErrors")
   questions   Questions[] @relation("ApplicationQuestions")
   coverLetter CoverLetter? @relation("ApplicationCoverLetter")
