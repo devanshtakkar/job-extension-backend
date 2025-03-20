@@ -25,7 +25,7 @@ export const QuestionAnswerSchema = z.object({
     id: z.string(),
     question: z.string(),
     answer: z.string(),
-    inputElmType: z.enum(['text', 'textarea', 'number', 'radio', 'select']),
+    inputElmType: z.enum(['text', 'textarea', 'number', 'radio', 'select', 'tel']),
     answerElmId: z.string()
 });
 

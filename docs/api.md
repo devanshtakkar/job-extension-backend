@@ -166,6 +166,66 @@ Create a new Indeed job application record.
   }
   ```
 
+### Update Indeed Application Status
+Update the status of an Indeed job application.
+
+**Endpoint:** `PUT /indeed-application/:applicationId`
+
+**URL Parameters:**
+- `applicationId`: number - ID of the application to update
+
+**Request Body:**
+```json
+{
+  "userId": "number",
+  "status": "STARTED | COMPLETED | ERROR"
+}
+```
+
+**Response:** `200 OK`
+```json
+{
+  "id": "number",
+  "userId": "number",
+  "jobDesc": "string",
+  "title": "string",
+  "employer": "string",
+  "status": "STARTED | COMPLETED | ERROR",
+  "applicationUrl": "string",
+  "createdAt": "string",
+  "updatedAt": "string"
+}
+```
+
+**Error Responses:**
+- `400 Bad Request`: Invalid request body
+  ```json
+  {
+    "error": "Validation Error",
+    "details": [/* Zod validation errors */]
+  }
+  ```
+- `404 Not Found`: User or application not found
+  ```json
+  {
+    "error": "User not found",
+    "message": "No user found with id {userId}"
+  }
+  ```
+  ```json
+  {
+    "error": "Application not found",
+    "message": "No application found with id {applicationId} for user {userId}"
+  }
+  ```
+- `500 Internal Server Error`: Server processing error
+  ```json
+  {
+    "error": "Internal Server Error",
+    "message": "Failed to update application"
+  }
+  ```
+
 ## Error Handling
 The API implements consistent error handling across all endpoints:
 

@@ -41,12 +41,12 @@ const responseSchema: ArraySchema = {
             inputElmType: {
                 type: SchemaType.STRING,
                 format: "enum",
-                enum: ["text", "textarea", "number", "radio", "select"],
+                enum: ["text", "textarea", "number", "radio", "select", "tel"],
                 description: "The type of input element as provided to you in the question object"
             },
             answerElmId: {
                 type: SchemaType.STRING,
-                description: "The id of the element where the answer should be inserted. for text and number input elements, this is the id of the input element. for radio input elements, this is the id of the correct option input element's id."
+                description: "The id of the element where the answer should be inserted. for text and number input elements, this is the id of the input element. for radio and select input elements, this is the id of the correct option input element's id."
             },
             wasAvailable: {
                 type: SchemaType.BOOLEAN,

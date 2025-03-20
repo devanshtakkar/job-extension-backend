@@ -4,7 +4,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import { ProcessQuestionsRequestSchema, QuestionAnswersArraySchema } from './types/question';
 import { processQuestions, generateCoverLetter } from './lib/gemini.service';
-import { CreateIndeedApplicationSchema } from './types/indeed-application';
+import { CreateIndeedApplicationSchema, UpdateIndeedApplicationSchema } from './types/indeed-application';
 import prisma from './lib/prisma';
 
 dotenv.config();
@@ -168,6 +168,72 @@ app.post('/api/indeed-application', async (req: Request, res: Response) => {
         res.status(500).json({
             error: 'Internal Server Error',
             message: 'Failed to create application'
+        });
+    }
+});
+
+// Update indeed application status endpoint
+app.put('/api/indeed-application/:applicationId', async (req: Request, res: Response) => {
+    try {
+        const data = UpdateIndeedApplicationSchema.parse({
+            userId: Number(req.body.userId),
+            applicationId: Number(req.params.applicationId),
+            status: req.body.status
+        });
+
+        // Check if user exists
+        const user = await prisma.user.findUnique({
+            where: { id: data.userId }
+        });
+
+        if (!user) {
+            res.status(404).json({
+                error: 'User not found',
+                message: `No user found with id ${data.userId}`
+            });
+            return;
+        }
+
+        // Check if application exists and belongs to user
+        const existingApplication = await prisma.indeedApplication.findFirst({
+            where: {
+                id: data.applicationId,
+                userId: data.userId
+            }
+        });
+
+        if (!existingApplication) {
+            res.status(404).json({
+                error: 'Application not found',
+                message: `No application found with id ${data.applicationId} for user ${data.userId}`
+            });
+            return;
+        }
+
+        // Update application status
+        const updatedApplication = await prisma.indeedApplication.update({
+            where: {
+                id: data.applicationId
+            },
+            data: {
+                status: data.status
+            }
+        });
+
+        res.json(updatedApplication);
+    } catch (error) {
+        if (error instanceof ZodError) {
+            res.status(400).json({
+                error: 'Validation Error',
+                details: error.errors
+            });
+            return;
+        }
+
+        console.error('Error updating application:', error);
+        res.status(500).json({
+            error: 'Internal Server Error',
+            message: 'Failed to update application'
         });
     }
 });
