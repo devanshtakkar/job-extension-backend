@@ -124,6 +124,54 @@ Authorization: Bearer <token>
 
 ## Endpoints
 
+### Answer Radio Questions
+Process radio button questions using AI.
+
+**Endpoint:** `POST /radio/answer`
+
+**Request Body:**
+```json
+{
+  "jobDetails": {
+    "jobTitle": "string",
+    "companyName": "string",
+    "desc": "string"
+  },
+  "html": "string" // HTML content containing radio buttons
+}
+```
+
+**Response:** `200 OK`
+```json
+{
+  "answer": "string" // AI-generated answer in JSON format
+}
+```
+
+**Error Responses:**
+- `400 Bad Request`: Invalid request body
+  ```json
+  {
+    "error": "Missing required fields: jobDetails and html are required"
+  }
+  ```
+  ```json
+  {
+    "error": "HTML must be a string"
+  }
+  ```
+  ```json
+  {
+    "error": "Invalid job details format"
+  }
+  ```
+- `500 Internal Server Error`: Processing error
+  ```json
+  {
+    "error": "Failed to process radio questions"
+  }
+  ```
+
 ### Process Questions
 Process job application questions using AI.
 

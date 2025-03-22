@@ -79,7 +79,7 @@ Remember to be confident but not arrogant, specific but concise, and enthusiasti
 
 export async function processQuestions(questions: Question[]) {
     const currentDate = new Date().toISOString();
-    
+
     const prompt = JSON.stringify({
         currentDate,
         userProfile: questionUserProfile,
@@ -89,7 +89,7 @@ export async function processQuestions(questions: Question[]) {
 
     try {
         const result = await model.generateContent({
-            contents: [{ role: "user", parts: [{ text: prompt }]}],
+            contents: [{ role: "user", parts: [{ text: prompt }] }],
             generationConfig: {
                 responseMimeType: "application/json",
                 responseSchema: responseSchema
@@ -114,7 +114,7 @@ export async function generateCoverLetter(jobDetails: JobDetails, userInput?: st
         });
 
         const result = await model.generateContent({
-            contents: [{ role: "user", parts: [{ text: prompt }]}],
+            contents: [{ role: "user", parts: [{ text: prompt }] }],
             generationConfig: {
                 temperature: 0.7,
                 maxOutputTokens: 1024
@@ -126,5 +126,40 @@ export async function generateCoverLetter(jobDetails: JobDetails, userInput?: st
     } catch (error) {
         console.error("Error generating cover letter:", error);
         throw new Error("Failed to generate cover letter");
+    }
+}
+
+
+const radioButtonSystemInstructions = `You are an AI assistant that helps the user fill out online job application forms. You will be provided with HTML containing checkbox elements. Always respond in JSON format based on the provided schema.  
+
+Use the user and job details given to you to answer the questions accordingly and always respond in the user's favor.  
+
+For each question, ensure that the \`id\` field in the JSON corresponds to the correct input element's ID from the provided HTML. In the \`answer\` field, fill in the value of the input element that should be selected.  
+
+Strictly follow this rule, as the ID must be correct for programmatic form filling.
+`
+
+export async function answerRadioQuestion(jobDetails: JobDetails, html: string) {
+    try {
+        const prompt = JSON.stringify({
+            userProfile: userProfile.toString(),
+            jobDetails,
+            html,
+            currentDate: new Date().toISOString()
+        });
+
+        const result = await model.generateContent({
+            contents: [{ role: "user", parts: [{ text: prompt }] }],
+            generationConfig: {
+                responseMimeType: "application/json",
+                responseSchema: responseSchema
+            },
+            systemInstruction: radioButtonSystemInstructions
+        });
+
+        return result.response.text();
+    } catch (error) {
+        console.error("Error answering radio questions", error);
+        throw new Error("Failed to answer radio question");
     }
 }

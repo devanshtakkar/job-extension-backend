@@ -6,6 +6,7 @@ import { ProcessQuestionsRequestSchema, QuestionAnswersArraySchema } from './typ
 import { processQuestions, generateCoverLetter } from './lib/gemini.service';
 import { CreateIndeedApplicationSchema, UpdateIndeedApplicationSchema } from './types/indeed-application';
 import authRoutes from './routes/auth.routes';
+import radioRoutes from './routes/radio.routes';
 import prisma from './lib/prisma';
 
 dotenv.config();
@@ -21,6 +22,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/radio', radioRoutes);
 
 // Process questions endpoint and cover letter endpoints
 app.post('/api/process-questions', async (req: Request, res: Response) => {
