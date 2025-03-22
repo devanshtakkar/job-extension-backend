@@ -124,10 +124,10 @@ Authorization: Bearer <token>
 
 ## Endpoints
 
-### Answer Radio Questions
-Process radio button questions using AI.
+### Answer Checkbox Questions
+Process checkbox input questions using AI.
 
-**Endpoint:** `POST /radio/answer`
+**Endpoint:** `POST /checkbox/answer`
 
 **Request Body:**
 ```json
@@ -137,7 +137,7 @@ Process radio button questions using AI.
     "companyName": "string",
     "desc": "string"
   },
-  "html": "string" // HTML content containing radio buttons
+  "html": "string" // HTML content containing checkbox inputs
 }
 ```
 
@@ -168,7 +168,7 @@ Process radio button questions using AI.
 - `500 Internal Server Error`: Processing error
   ```json
   {
-    "error": "Failed to process radio questions"
+    "error": "Failed to process checkbox questions"
   }
   ```
 

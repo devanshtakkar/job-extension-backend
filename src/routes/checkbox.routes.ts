@@ -1,12 +1,12 @@
 import { Router } from 'express';
-import { answerRadioQuestion } from '../lib/gemini.service';
+import { answerCheckboxQuestion } from '../lib/gemini.service';
 import { JobDetails } from '../types/cover-letter';
 
 const router = Router();
 
 /**
- * POST /api/radio/answer
- * Answers radio button questions using Gemini AI
+ * POST /api/checkbox/answer
+ * Answers checkbox questions using Gemini AI
  */
 router.post('/answer', async (req, res) => {
     try {
@@ -35,12 +35,12 @@ router.post('/answer', async (req, res) => {
             return;
         }
 
-        const answer = await answerRadioQuestion(jobDetails, html);
+        const answer = await answerCheckboxQuestion(jobDetails, html);
         res.json({ answer });
     } catch (error) {
-        console.error('Radio question answering error:', error);
+        console.error('Checkbox question answering error:', error);
         res.status(500).json({
-            error: 'Failed to process radio questions'
+            error: 'Failed to process checkbox questions'
         });
     }
 });
@@ -51,8 +51,7 @@ function isValidJobDetails(details: any): details is JobDetails {
         typeof details === 'object' &&
         details !== null &&
         typeof details.jobTitle === 'string' &&
-        typeof details.companyName === 'string' &&
-        typeof details.desc === 'string'
+        typeof details.companyName === 'string'
     );
 }
 

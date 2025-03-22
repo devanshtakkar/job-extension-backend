@@ -130,7 +130,7 @@ export async function generateCoverLetter(jobDetails: JobDetails, userInput?: st
 }
 
 
-const radioButtonSystemInstructions = `You are an AI assistant that helps the user fill out online job application forms. You will be provided with HTML containing checkbox elements. Always respond in JSON format based on the provided schema.  
+const checkboxSystemInstructions = `You are an AI assistant that helps the user fill out online job application forms. You will be provided with HTML containing checkbox elements. Always respond in JSON format based on the provided schema.  
 
 Use the user and job details given to you to answer the questions accordingly and always respond in the user's favor.  
 
@@ -139,7 +139,7 @@ For each question, ensure that the \`id\` field in the JSON corresponds to the c
 Strictly follow this rule, as the ID must be correct for programmatic form filling.
 `
 
-export async function answerRadioQuestion(jobDetails: JobDetails, html: string) {
+export async function answerCheckboxQuestion(jobDetails: JobDetails, html: string) {
     try {
         const prompt = JSON.stringify({
             userProfile: userProfile.toString(),
@@ -154,12 +154,12 @@ export async function answerRadioQuestion(jobDetails: JobDetails, html: string) 
                 responseMimeType: "application/json",
                 responseSchema: responseSchema
             },
-            systemInstruction: radioButtonSystemInstructions
+            systemInstruction: checkboxSystemInstructions
         });
 
         return result.response.text();
     } catch (error) {
-        console.error("Error answering radio questions", error);
-        throw new Error("Failed to answer radio question");
+        console.error("Error answering checkbox questions", error);
+        throw new Error("Failed to answer checkbox question");
     }
 }
