@@ -56,7 +56,7 @@ For new users or expired tokens:
   ```
 
 ### Verify Email
-Verify email and get authenticated token.
+Verify email by validating the token.
 
 **Endpoint:** `GET /auth/verify`
 
@@ -67,7 +67,7 @@ Verify email and get authenticated token.
 ```json
 {
   "message": "Email verified successfully",
-  "token": "string" // New JWT token with verified status
+  "token": "string" // Same token with verified status updated
 }
 ```
 
@@ -77,6 +77,13 @@ Verify email and get authenticated token.
   {
     "error": "Validation Error",
     "message": ["Token is required"]
+  }
+  ```
+- `404 Not Found`: Token not found in database
+  ```json
+  {
+    "error": "Not Found",
+    "message": "Token not found in database"
   }
   ```
 - `500 Internal Server Error`: Token verification failed

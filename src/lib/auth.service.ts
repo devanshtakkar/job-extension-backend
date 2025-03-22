@@ -62,7 +62,8 @@ export class AuthService {
     const token = await prisma.token.findFirst({
       where: {
         userId,
-        expiresAt: { gt: new Date() }
+        expiresAt: { gt: new Date() },
+        verified: true
       },
       orderBy: { createdAt: 'desc' }
     });
