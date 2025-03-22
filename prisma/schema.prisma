@@ -23,7 +23,7 @@ model User {
   firebase_userid String?             @unique
   applications    IndeedApplication[]
   questions       Questions[]
-  userDetails     UserDetails[]
+  userDetails     UserResume[]
   fingerprint     String?             @unique
   tokens          Token[]
 }
@@ -97,14 +97,14 @@ model CoverLetter {
   createdAt     DateTime           @default(now())
 }
 
-model UserDetails {
-  id          Int      @id @default(autoincrement())
+model UserResume {
+  id          Int       @id @default(autoincrement())
   userId      Int
-  user        User     @relation(fields: [userId], references: [id])
-  name        String
+  user        User      @relation(fields: [userId], references: [id])
+  resume_name String
   details     Json
-  createdAt   DateTime @default(now())
-  resume_link String?
-
-  @@index([userId])
+  createdAt   DateTime  @default(now())
+  resume_url  String?
+  uploaded_at DateTime?
+  file_id     String?   @unique // Google Storage object name
 }

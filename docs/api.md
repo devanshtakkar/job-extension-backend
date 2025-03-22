@@ -95,6 +95,8 @@ Verify email by validating the token.
   ```
 
 ### Authentication Headers
+
+All resume endpoints require authentication using JWT tokens.
 For protected endpoints, include the JWT token in the Authorization header:
 ```
 Authorization: Bearer <token>
@@ -123,6 +125,91 @@ Authorization: Bearer <token>
   ```
 
 ## Endpoints
+
+### Resume Management
+Handle resume file uploads and management using Google Cloud Storage.
+
+#### Get Upload URL
+Get a signed URL for uploading a resume file to Google Cloud Storage.
+
+**Endpoint:** `GET /api/resume/upload-url`
+
+**Query Parameters:**
+- `fileName`: string - Original name of the file to upload
+- `contentType`: string - MIME type of the file (e.g., 'application/pdf')
+
+**Response:** `200 OK`
+```json
+{
+  "uploadUrl": "string", // Signed URL for uploading
+  "fileId": "string", // Unique file identifier
+  "publicUrl": "string" // Public URL after upload completes
+}
+```
+
+#### List User's Resumes
+Get all resumes for the authenticated user.
+
+**Endpoint:** `GET /api/resume`
+
+**Response:** `200 OK`
+```json
+[
+  {
+    "id": "number",
+    "resume_name": "string",
+    "resume_url": "string",
+    "uploaded_at": "string",
+    "file_id": "string",
+    "details": "object"
+  }
+]
+```
+
+#### Get Resume Access URL
+Get a temporary signed URL to access a specific resume.
+
+**Endpoint:** `GET /api/resume/:fileId`
+
+**Parameters:**
+- `fileId`: string (URL parameter) - The file's unique identifier
+
+**Response:** `200 OK`
+```json
+{
+  "signedUrl": "string" // Temporary signed URL for accessing the file
+}
+```
+
+#### Delete Resume
+Delete a resume from storage and database.
+
+**Endpoint:** `DELETE /api/resume/:fileId`
+
+**Parameters:**
+- `fileId`: string (URL parameter) - The file's unique identifier
+
+**Response:** `204 No Content`
+
+**Error Responses for Resume Endpoints:**
+- `400 Bad Request`: Missing or invalid parameters
+  ```json
+  {
+    "error": "Missing required parameters: fileName and contentType are required"
+  }
+  ```
+- `404 Not Found`: File not found or access denied
+  ```json
+  {
+    "error": "File not found or access denied"
+  }
+  ```
+- `500 Internal Server Error`: Server processing error
+  ```json
+  {
+    "error": "Failed to generate upload URL"
+  }
+  ```
 
 ### Answer Checkbox Questions
 Process checkbox input questions using AI.

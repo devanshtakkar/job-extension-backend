@@ -7,6 +7,7 @@ import { processQuestions, generateCoverLetter } from './lib/gemini.service';
 import { CreateIndeedApplicationSchema, UpdateIndeedApplicationSchema } from './types/indeed-application';
 import authRoutes from './routes/auth.routes';
 import checkboxRoutes from './routes/checkbox.routes';
+import resumeRoutes from './routes/resume.routes';
 import prisma from './lib/prisma';
 
 dotenv.config();
@@ -23,6 +24,7 @@ app.use(express.urlencoded({ extended: true }));
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/checkbox', checkboxRoutes);
+app.use('/api/resume', resumeRoutes);
 
 // Process questions endpoint and cover letter endpoints
 app.post('/api/process-questions', async (req: Request, res: Response) => {

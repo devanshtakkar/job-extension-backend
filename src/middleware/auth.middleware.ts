@@ -21,10 +21,11 @@ export const authMiddleware = async (
   try {
     const authHeader = req.headers.authorization;
     if (!authHeader?.startsWith('Bearer ')) {
-      return res.status(401).json({
+       res.status(401).json({
         error: 'Unauthorized',
         message: 'No token provided'
       });
+      return;
     }
 
     const token = authHeader.split(' ')[1];
@@ -51,10 +52,11 @@ export const requireVerified = async (
   next: NextFunction
 ) => {
   if (!req.user?.verified) {
-    return res.status(403).json({
+    res.status(403).json({
       error: 'Forbidden',
       message: 'Email verification required'
     });
+    return;
   }
   next();
 };
