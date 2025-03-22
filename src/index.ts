@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import { ProcessQuestionsRequestSchema, QuestionAnswersArraySchema } from './types/question';
 import { processQuestions, generateCoverLetter } from './lib/gemini.service';
 import { CreateIndeedApplicationSchema, UpdateIndeedApplicationSchema } from './types/indeed-application';
+import authRoutes from './routes/auth.routes';
 import prisma from './lib/prisma';
 
 dotenv.config();
@@ -17,6 +18,9 @@ const port = process.env.PORT || 3000;
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Routes
+app.use('/api/auth', authRoutes);
 
 // Process questions endpoint and cover letter endpoints
 app.post('/api/process-questions', async (req: Request, res: Response) => {
