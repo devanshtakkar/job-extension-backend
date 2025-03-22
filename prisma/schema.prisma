@@ -30,15 +30,14 @@ model User {
 
 model Token {
   id        Int      @id @default(autoincrement())
-  token     String   @unique
+  token     String   @db.LongText()
   userId    Int
   user      User     @relation(fields: [userId], references: [id])
   expiresAt DateTime
   createdAt DateTime @default(now())
-  verified Boolean  @default(false)
+  verified  Boolean  @default(false)
 
   @@index([userId])
-  @@index([token])
 }
 
 enum ApplicationStatus {

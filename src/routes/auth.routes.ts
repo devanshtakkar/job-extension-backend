@@ -77,30 +77,32 @@ router.get('/verify', async (req: Request, res: Response) => {
         // Verify the token
         const decoded = await AuthService.verifyToken(token);
         
-        // Update the token with verified status
-        const newToken = await AuthService.createToken({
-            userId: decoded.userId,
-            email: decoded.email,
-            verified: true
+        // Find and update token to verified status
+        const tokenRecord = await prisma.token.findFirst({
+            where: {
+                token: token
+            }
         });
-        
-        // Update or create token in database
-        await prisma.token.upsert({
-            where: { token },
-            update: {
-                token: newToken,
-                expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000)
-            },
-            create: {
-                token: newToken,
-                userId: decoded.userId,
-                expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000)
+
+        if (!tokenRecord) {
+            const response: AuthErrorResponse = {
+                error: 'Not Found',
+                message: 'Token not found in database'
+            };
+            res.status(404).json(response);
+            return;
+        }
+
+        await prisma.token.update({
+            where: { id: tokenRecord.id },
+            data: {
+                verified: true
             }
         });
         
         const response: VerifyTokenSuccessResponse = {
             message: 'Email verified successfully',
-            token: newToken
+            token
         };
         res.json(response);
     } catch (error) {

@@ -8,6 +8,113 @@ This API provides endpoints for processing job application questions, generating
 http://localhost:3000/api
 ```
 
+## Authentication
+
+### Email Authentication
+Initiate email-based authentication or registration.
+
+**Endpoint:** `POST /auth/email`
+
+**Request Body:**
+```json
+{
+  "email": "string" // Valid email address
+}
+```
+
+**Response:** `200 OK`
+
+For existing users with valid token:
+```json
+{
+  "token": "string" // JWT token
+}
+```
+
+For new users or expired tokens:
+```json
+{
+  "message": "Verification email sent",
+  "newUser": true | false
+}
+```
+
+**Error Responses:**
+- `400 Bad Request`: Invalid email format
+  ```json
+  {
+    "error": "Validation Error",
+    "message": ["Invalid email address"]
+  }
+  ```
+- `500 Internal Server Error`: Server processing error
+  ```json
+  {
+    "error": "Internal Server Error",
+    "message": "Failed to process authentication"
+  }
+  ```
+
+### Verify Email
+Verify email and get authenticated token.
+
+**Endpoint:** `GET /auth/verify`
+
+**Query Parameters:**
+- `token`: string - JWT token received in verification email
+
+**Response:** `200 OK`
+```json
+{
+  "message": "Email verified successfully",
+  "token": "string" // New JWT token with verified status
+}
+```
+
+**Error Responses:**
+- `400 Bad Request`: Invalid or missing token
+  ```json
+  {
+    "error": "Validation Error",
+    "message": ["Token is required"]
+  }
+  ```
+- `500 Internal Server Error`: Token verification failed
+  ```json
+  {
+    "error": "Internal Server Error",
+    "message": "Failed to verify email"
+  }
+  ```
+
+### Authentication Headers
+For protected endpoints, include the JWT token in the Authorization header:
+```
+Authorization: Bearer <token>
+```
+
+**Error Responses for Protected Endpoints:**
+- `401 Unauthorized`: Missing or invalid token
+  ```json
+  {
+    "error": "Unauthorized",
+    "message": "No token provided"
+  }
+  ```
+  ```json
+  {
+    "error": "Unauthorized",
+    "message": "Invalid or expired token"
+  }
+  ```
+- `403 Forbidden`: Email not verified
+  ```json
+  {
+    "error": "Forbidden",
+    "message": "Email verification required"
+  }
+  ```
+
 ## Endpoints
 
 ### Process Questions
