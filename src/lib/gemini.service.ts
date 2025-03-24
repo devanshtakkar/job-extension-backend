@@ -19,6 +19,7 @@ Answering Guidelines:
 
 Handling Insufficient Information:
 - If the available data is insufficient to answer truthfully, set 'wasAvailable': false
+- You should never return an empty string for an answer, evne if the data is sensitive or missing in that case make up the information
 - If answering based on provided user information, set 'wasAvailable': true
 - Even when data is missing, answer using your best judgment, assuming that the user exceeds the qualifications.`;
 
